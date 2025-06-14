@@ -1,0 +1,113 @@
+buildscript
+{
+    dependencies
+    {
+        classpath 'org.ow2.asm:asm:9.7'
+        classpath 'org.ow2.asm:asm-commons:9.7'
+    }
+}
+
+plugins
+{
+     id 'java'
+     id "com.github.johnrengelman.shadow" version "8.1.1"
+}
+
+group = 'me.darkakyloff.core'
+version = '2.0'
+
+repositories
+        {
+            mavenCentral()
+
+            maven { url "https://repo.papermc.io/repository/maven-public/" }
+            maven { url "https://maven.enginehub.org/repo/" }
+            maven { url "https://maven.elmakers.com/repository/" }
+            maven { url 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
+            maven { url "https://repo.dmulloy2.net/repository/public/" }
+            maven { url 'https://jitpack.io' }
+            maven { url 'https://repo.xenondevs.xyz/releases' }
+
+            mavenLocal()
+        }
+
+configurations.configureEach
+{
+    resolutionStrategy.eachDependency
+    { details ->
+        if (details.requested.group == 'org.ow2.asm')
+        {
+            details.useVersion '9.7'
+
+            details.because 'Java 23 support'
+        }
+    }
+}
+
+dependencies
+{
+    compileOnly "com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT"
+    compileOnly 'com.comphenix.protocol:ProtocolLib:5.1.0'
+    compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.5'
+    compileOnly 'me.clip:placeholderapi:2.11.6'
+    compileOnly "com.github.MilkBowl:VaultAPI:1.7"
+    compileOnly "net.kyori:adventure-text-minimessage:4.17.0"
+    compileOnly "net.kyori:adventure-platform-bukkit:4.3.4"
+
+    implementation 'com.mojang:authlib:1.5.21'
+    implementation 'com.github.pengrad:java-telegram-bot-api:7.11.0'
+    implementation "xyz.xenondevs.invui:invui:1.33"
+    implementation 'org.mariadb.jdbc:mariadb-java-client:2.7.3'
+    implementation "io.papermc:paperlib:1.0.7"
+    implementation 'com.zaxxer:HikariCP:5.0.0'
+    implementation "com.github.Querz:NBT:6.1"
+
+    implementation 'org.ow2.asm:asm:9.7'
+    implementation 'org.ow2.asm:asm-commons:9.7'
+}
+
+shadowJar
+{
+    archiveFileName = 'Core.jar'
+    destinationDirectory = file("C:\\Users\\darkakyloff\\Desktop\\bukkit\\plugins\\")
+
+//    relocate 'com.mojang', 'me.darkakyloff.libs.com.mojang'
+    relocate 'com.pengrad', 'me.darkakyloff.libs.com.pengrad'
+    relocate 'xyz.xenondevs', 'me.darkakyloff.libs.xyz.xenondevs'
+    relocate 'org.mariadb', 'me.darkakyloff.libs.org.mariadb'
+    relocate 'io.papermc.lib', 'me.darkakyloff.libs.io.papermc.lib'
+    relocate 'com.zaxxer', 'me.darkakyloff.libs.com.zaxxer'
+    relocate 'blue.endless.jankson', 'me.darkakyloff.libs.blue.endless.jankson'
+    relocate 'net.querz', 'me.darkakyloff.libs.net.querz'
+    relocate 'org.ow2.asm', 'me.darkakyloff.libs.org.ow2.asm'
+
+    relocate 'okhttp3', 'me.darkakyloff.libs.okhttp3'
+    relocate 'okio', 'me.darkakyloff.libs.okio'
+    relocate 'retrofit2', 'me.darkakyloff.libs.retrofit2'
+    relocate 'com.google', 'me.darkakyloff.libs.com.google'
+    relocate 'kotlinx', 'me.darkakyloff.libs.kotlinx'
+    relocate 'kotlin', 'me.darkakyloff.libs.kotlin'
+
+
+    relocate 'org.jetbrains', 'me.darkakyloff.libs.org.jetbrains'
+
+    exclude 'META-INF/**'
+    exclude 'yggdrasil_session_pubkey.der'
+    exclude 'mariadb.properties'
+    exclude 'Log4j-events.xsd'
+    exclude 'Log4j-events.dtd'
+    exclude 'Log4j-config.xsd'
+    exclude 'colors.bin'
+}
+
+java
+{
+    toolchain {languageVersion.set(JavaLanguageVersion.of(23))}
+}
+
+tasks.withType(JavaCompile).configureEach
+{
+    options.encoding = 'UTF-8'
+}
+
+tasks { build { dependsOn(shadowJar) }}
